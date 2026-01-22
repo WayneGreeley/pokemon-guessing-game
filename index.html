@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Guessing Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Pokemon Guessing Game</h1>
+            <p>Guess the Pokemon name letter by letter!</p>
+        </header>
+        
+        <main>
+            <div id="game-area">
+                <div id="pokemon-display">
+                    <div id="pokemon-name" class="pokemon-name"></div>
+                </div>
+                
+                <div id="game-info">
+                    <div id="remaining-guesses" class="info-item">
+                        <span class="label">Remaining Guesses:</span>
+                        <span id="guess-count" class="value">7</span>
+                    </div>
+                    
+                    <div id="guessed-letters" class="info-item">
+                        <div class="guessed-section">
+                            <span class="label">Correct Letters:</span>
+                            <span id="correct-letters" class="letters"></span>
+                        </div>
+                        <div class="guessed-section">
+                            <span class="label">Incorrect Letters:</span>
+                            <span id="incorrect-letters" class="letters"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="input-area">
+                    <div class="input-group">
+                        <label for="letter-input">Guess a letter:</label>
+                        <input type="text" id="letter-input" maxlength="1">
+                        <button id="guess-button">Guess</button>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="hint-button">Get Hint (-1 guess)</button>
+                        <button id="new-game-button">New Game</button>
+                    </div>
+                </div>
+                
+                <div id="hint-display" class="hint-area" style="display: none;">
+                    <h3>Hint:</h3>
+                    <div id="hint-content"></div>
+                </div>
+                
+                <div id="game-message" class="message-area" style="display: none;">
+                    <div id="message-content"></div>
+                </div>
+            </div>
+            
+            <div id="loading" class="loading" style="display: none;">
+                <p>Loading Pokemon data...</p>
+            </div>
+            
+            <div id="error" class="error" style="display: none;">
+                <p id="error-message"></p>
+                <button id="retry-button">Try Again</button>
+            </div>
+        </main>
+    </div>
+    
+    <script src="dist/bundle.js"></script>
+</body>
+</html>
