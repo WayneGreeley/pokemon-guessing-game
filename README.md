@@ -22,6 +22,9 @@ A web-based Pokemon guessing game that challenges players to identify Pokemon sp
 
 ## Getting Started
 
+### Live Demo
+🎮 **Play the game now**: [https://waynegreeley.github.io/pokemon-guessing-game/](https://waynegreeley.github.io/pokemon-guessing-game/)
+
 ### Prerequisites
 
 - Node.js (version 16 or higher)
