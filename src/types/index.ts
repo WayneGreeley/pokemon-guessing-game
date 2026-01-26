@@ -10,7 +10,19 @@ export interface PokemonData {
   readonly types: readonly string[];     // Pokemon types (e.g., ["electric"])
   readonly abilities: readonly string[]; // Ability names
   readonly id: number;            // Pokemon ID for API calls
+  readonly sprites: PokemonSprites;      // Image data for display
 }
+
+export interface PokemonSprites {
+  readonly other: {
+    readonly 'official-artwork': {
+      readonly front_default: string | null;
+    };
+  };
+  readonly front_default: string | null;
+}
+
+
 
 export interface GameState {
   readonly currentPokemon: PokemonData | null;
@@ -58,6 +70,8 @@ export interface GenerationData {
   readonly pokemonSpecies: readonly PokemonReference[];
 }
 
+
+
 // API response models (matching PokeAPI structure)
 export interface GenerationResponse {
   readonly pokemon_species: readonly {
@@ -79,7 +93,17 @@ export interface PokemonResponse {
       readonly name: string;
     };
   }[];
+  readonly sprites: {
+    readonly front_default: string | null;
+    readonly other: {
+      readonly 'official-artwork': {
+        readonly front_default: string | null;
+      };
+    };
+  };
 }
+
+
 
 // Component interfaces
 export interface GameEngine {
@@ -126,6 +150,15 @@ export interface UIController {
   showError(message: string, showRetry?: boolean): void;
   showNetworkError(message: string): void;
 }
+
+export interface ImageDisplay {
+  displayPokemonImage(pokemon: PokemonData): void;
+  getImageUrl(pokemon: PokemonData): string;
+  handleImageError(): void;
+  hideImage(): void;
+}
+
+
 
 // Error types
 export class PokemonGameError extends Error {

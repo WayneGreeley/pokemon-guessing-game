@@ -5,6 +5,7 @@
 
 import { GameStateManager } from './GameState';
 import { PokemonData, GAME_CONSTANTS } from '../types';
+import { createMockPokemonData } from '../test-setup';
 import * as fc from 'fast-check';
 
 describe('GameStateManager', () => {
@@ -13,13 +14,13 @@ describe('GameStateManager', () => {
 
   beforeEach(() => {
     gameState = new GameStateManager();
-    mockPokemon = {
+    mockPokemon = createMockPokemonData({
       name: 'pikachu',
       generation: 1,
       types: ['electric'],
       abilities: ['static', 'lightning-rod'],
       id: 25
-    };
+    });
   });
 
   describe('initialization', () => {
@@ -76,10 +77,9 @@ describe('GameStateManager', () => {
 
     it('should handle Pokemon names with non-alphabetic characters', () => {
       // Given - Pokemon with hyphen in name
-      const pokemonWithHyphen: PokemonData = {
-        ...mockPokemon,
+      const pokemonWithHyphen = createMockPokemonData({
         name: 'ho-oh'
-      };
+      });
 
       // When - initializing new game
       gameState.initializeNewGame(pokemonWithHyphen);
@@ -91,13 +91,12 @@ describe('GameStateManager', () => {
 
     it('should throw error for invalid Pokemon data', () => {
       // Given - invalid Pokemon data
-      const invalidPokemon = {
-        ...mockPokemon,
+      const invalidPokemon = createMockPokemonData({
         name: ''
-      };
+      });
 
       // When/Then - should throw validation error
-      expect(() => gameState.initializeNewGame(invalidPokemon as PokemonData))
+      expect(() => gameState.initializeNewGame(invalidPokemon))
         .toThrow('Pokemon must have a valid name');
     });
   });
@@ -346,10 +345,9 @@ describe('GameStateManager', () => {
 
     it('should get Pokemon name in lowercase', () => {
       // Given - Pokemon with mixed case name
-      const mixedCasePokemon: PokemonData = {
-        ...mockPokemon,
+      const mixedCasePokemon = createMockPokemonData({
         name: 'Pikachu'
-      };
+      });
       gameState.initializeNewGame(mixedCasePokemon);
 
       // When - getting lowercase name
@@ -406,7 +404,7 @@ describe('GameStateManager', () => {
           types: fc.array(fc.stringMatching(/^[a-z]+$/), { minLength: 1, maxLength: 3 }),
           abilities: fc.array(fc.stringMatching(/^[a-z-]+$/), { minLength: 0, maxLength: 4 }),
           id: fc.integer({ min: 1, max: 1010 })
-        });
+        }).map(data => createMockPokemonData(data));
 
         fc.assert(
           fc.property(pokemonArbitrary, (pokemon) => {
@@ -452,7 +450,7 @@ describe('GameStateManager', () => {
           types: fc.array(fc.stringMatching(/^[a-z]+$/), { minLength: 1, maxLength: 3 }),
           abilities: fc.array(fc.stringMatching(/^[a-z-]+$/), { minLength: 0, maxLength: 4 }),
           id: fc.integer({ min: 1, max: 1010 })
-        });
+        }).map(data => createMockPokemonData(data));
 
         fc.assert(
           fc.property(pokemonArbitrary, gameModificationArbitrary, (pokemon, modifications) => {

@@ -8,18 +8,25 @@ import { GameStateManager } from './GameState';
 import { LetterRevealerImpl } from './LetterRevealer';
 import { HintSystemImpl } from './HintSystem';
 import { PokemonData, ValidationError, PokemonGameError, GameState } from '../types';
+import { createMockPokemonData } from '../test-setup';
 import * as fc from 'fast-check';
+
+// Helper function to create complete test Pokemon data
+function createTestPokemon(overrides: Partial<PokemonData> = {}): PokemonData {
+  return createMockPokemonData({
+    name: 'pikachu',
+    generation: 1,
+    types: ['electric'],
+    abilities: ['static', 'lightning-rod'],
+    id: 25,
+    ...overrides
+  });
+}
 
 // Mock implementations for testing
 class MockPokemonSelector {
   async selectRandomPokemon(): Promise<PokemonData> {
-    return {
-      name: 'pikachu',
-      generation: 1,
-      types: ['electric'],
-      abilities: ['static', 'lightning-rod'],
-      id: 25
-    };
+    return createTestPokemon();
   }
 
   filterValidPokemon = jest.fn();
@@ -305,13 +312,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -372,13 +379,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -431,13 +438,13 @@ describe('GameEngine', () => {
               const createGameEngine = () => new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -502,13 +509,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -561,13 +568,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -635,13 +642,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -715,13 +722,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -798,13 +805,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -885,13 +892,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -964,13 +971,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -1045,13 +1052,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -1135,13 +1142,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['electric'],
                       abilities: ['static', 'lightning-rod'],
                       id: 25
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -1211,13 +1218,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,
@@ -1287,13 +1294,13 @@ describe('GameEngine', () => {
               const freshGameEngine = new GameEngineImpl(
                 {
                   async selectRandomPokemon(): Promise<PokemonData> {
-                    return {
+                    return createMockPokemonData({
                       name: pokemonName,
                       generation: 1,
                       types: ['normal'],
                       abilities: ['test-ability'],
                       id: 1
-                    };
+                    });
                   },
                   filterValidPokemon: jest.fn()
                 } as any,

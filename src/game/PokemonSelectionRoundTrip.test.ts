@@ -7,6 +7,7 @@ import fc from 'fast-check';
 import { PokemonSelectorImpl } from './PokemonSelector';
 import { PokeAPIClientImpl } from '../api/PokeAPIClient';
 import { PokemonData, GenerationData, PokemonReference } from '../types';
+import { createMockPokemonData } from '../test-setup';
 
 // Mock the PokeAPI client
 jest.mock('../api/PokeAPIClient');
@@ -42,7 +43,7 @@ describe('Pokemon Selection Round Trip Property Tests', () => {
             types: fc.array(fc.string({ minLength: 1 }), { minLength: 1, maxLength: 3 }),
             abilities: fc.array(fc.string({ minLength: 1 }), { minLength: 1, maxLength: 4 }),
             id: fc.integer({ min: 1, max: 1010 })
-          }),
+          }).map(data => createMockPokemonData(data)),
           fc.array(
             fc.record({
               name: fc.stringMatching(/^[a-z]+$/),
@@ -106,7 +107,7 @@ describe('Pokemon Selection Round Trip Property Tests', () => {
               types: fc.array(fc.string({ minLength: 1 }), { minLength: 1, maxLength: 1 }),
               abilities: fc.array(fc.string({ minLength: 1 }), { minLength: 1, maxLength: 1 }),
               id: fc.constantFrom(1, 1010) // Edge IDs
-            }),
+            }).map(data => createMockPokemonData(data)),
             // Long names (but still alphabetic)
             fc.record({
               name: fc.stringMatching(/^[a-z]{10,20}$/),
@@ -114,7 +115,7 @@ describe('Pokemon Selection Round Trip Property Tests', () => {
               types: fc.array(fc.string({ minLength: 1 }), { minLength: 1, maxLength: 3 }),
               abilities: fc.array(fc.string({ minLength: 1 }), { minLength: 0, maxLength: 4 }),
               id: fc.integer({ min: 1, max: 1010 })
-            })
+            }).map(data => createMockPokemonData(data))
           ),
           fc.array(
             fc.record({
@@ -159,7 +160,7 @@ describe('Pokemon Selection Round Trip Property Tests', () => {
               types: fc.array(fc.string({ minLength: 1 }), { minLength: 1, maxLength: 3 }),
               abilities: fc.array(fc.string({ minLength: 1 }), { minLength: 0, maxLength: 4 }),
               id: fc.integer({ min: 1, max: 1010 })
-            }),
+            }).map(data => createMockPokemonData(data)),
             { minLength: 2, maxLength: 5 }
           ),
           async (pokemonDataArray: PokemonData[]) => {
@@ -239,7 +240,7 @@ describe('Pokemon Selection Round Trip Property Tests', () => {
               types: fc.array(fc.string({ minLength: 1 }), { minLength: 1, maxLength: 3 }),
               abilities: fc.array(fc.string({ minLength: 1 }), { minLength: 0, maxLength: 4 }),
               id: fc.integer({ min: 1, max: 1010 })
-            })
+            }).map(data => createMockPokemonData(data))
           }),
           async ({ validPokemon, invalidPokemon, selectedPokemonData }) => {
             // Given: Mixed list with valid and invalid Pokemon names

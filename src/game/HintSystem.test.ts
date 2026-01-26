@@ -5,6 +5,7 @@
 
 import { HintSystemImpl } from './HintSystem';
 import { PokemonData, ValidationError } from '../types';
+import { createMockPokemonData } from '../test-setup';
 import * as fc from 'fast-check';
 
 describe('HintSystem', () => {
@@ -17,13 +18,7 @@ describe('HintSystem', () => {
   describe('initializePokemon', () => {
     it('should initialize with valid Pokemon data', () => {
       // Given
-      const pokemon: PokemonData = {
-        name: 'pikachu',
-        generation: 1,
-        types: ['electric'],
-        abilities: ['static', 'lightning-rod'],
-        id: 25
-      };
+      const pokemon = createMockPokemonData();
 
       // When
       hintSystem.initializePokemon(pokemon);
@@ -43,13 +38,9 @@ describe('HintSystem', () => {
 
     it('should throw error for invalid generation', () => {
       // Given
-      const pokemon: PokemonData = {
-        name: 'pikachu',
-        generation: 0, // Invalid generation
-        types: ['electric'],
-        abilities: ['static'],
-        id: 25
-      };
+      const pokemon = createMockPokemonData({
+        generation: 0 // Invalid generation
+      });
 
       // When & Then
       expect(() => hintSystem.initializePokemon(pokemon)).toThrow(ValidationError);
@@ -57,13 +48,13 @@ describe('HintSystem', () => {
 
     it('should throw error for non-array types', () => {
       // Given
-      const pokemon = {
+      const pokemon = createMockPokemonData({
         name: 'pikachu',
         generation: 1,
         types: 'electric' as any, // Should be array
         abilities: ['static'],
         id: 25
-      };
+      });
 
       // When & Then
       expect(() => hintSystem.initializePokemon(pokemon)).toThrow(ValidationError);
@@ -71,13 +62,13 @@ describe('HintSystem', () => {
 
     it('should throw error for non-array abilities', () => {
       // Given
-      const pokemon = {
+      const pokemon = createMockPokemonData({
         name: 'pikachu',
         generation: 1,
         types: ['electric'],
         abilities: 'static' as any, // Should be array
         id: 25
-      };
+      });
 
       // When & Then
       expect(() => hintSystem.initializePokemon(pokemon)).toThrow(ValidationError);
@@ -86,13 +77,7 @@ describe('HintSystem', () => {
 
   describe('generateHint', () => {
     beforeEach(() => {
-      const pokemon: PokemonData = {
-        name: 'pikachu',
-        generation: 1,
-        types: ['electric'],
-        abilities: ['static', 'lightning-rod'],
-        id: 25
-      };
+      const pokemon = createMockPokemonData();
       hintSystem.initializePokemon(pokemon);
     });
 
@@ -109,13 +94,12 @@ describe('HintSystem', () => {
 
     it('should handle multiple types correctly', () => {
       // Given
-      const pokemon: PokemonData = {
+      const pokemon = createMockPokemonData({
         name: 'charizard',
-        generation: 1,
         types: ['fire', 'flying'],
         abilities: ['blaze', 'solar-power'],
         id: 6
-      };
+      });
       hintSystem.initializePokemon(pokemon);
 
       // When
@@ -129,13 +113,13 @@ describe('HintSystem', () => {
 
     it('should handle single ability correctly', () => {
       // Given
-      const pokemon: PokemonData = {
+      const pokemon: PokemonData = createMockPokemonData({
         name: 'snorlax',
         generation: 1,
         types: ['normal'],
         abilities: ['immunity'],
         id: 143
-      };
+      });
       hintSystem.initializePokemon(pokemon);
 
       // When
@@ -149,13 +133,13 @@ describe('HintSystem', () => {
 
     it('should format hyphenated ability names correctly', () => {
       // Given
-      const pokemon: PokemonData = {
+      const pokemon: PokemonData = createMockPokemonData({
         name: 'pikachu',
         generation: 1,
         types: ['electric'],
         abilities: ['lightning-rod', 'motor-drive'],
         id: 25
-      };
+      });
       hintSystem.initializePokemon(pokemon);
 
       // When
@@ -167,13 +151,13 @@ describe('HintSystem', () => {
 
     it('should handle empty abilities array', () => {
       // Given
-      const pokemon: PokemonData = {
+      const pokemon: PokemonData = createMockPokemonData({
         name: 'missingno',
         generation: 1,
         types: ['normal'],
         abilities: [],
         id: 0
-      };
+      });
       hintSystem.initializePokemon(pokemon);
 
       // When
@@ -188,13 +172,13 @@ describe('HintSystem', () => {
 
     it('should handle empty types array', () => {
       // Given
-      const pokemon: PokemonData = {
+      const pokemon: PokemonData = createMockPokemonData({
         name: 'missingno',
         generation: 1,
         types: [],
         abilities: ['static'],
         id: 0
-      };
+      });
       hintSystem.initializePokemon(pokemon);
 
       // When
@@ -237,13 +221,13 @@ describe('HintSystem', () => {
 
     it('should return true when Pokemon is initialized', () => {
       // Given
-      const pokemon: PokemonData = {
+      const pokemon: PokemonData = createMockPokemonData({
         name: 'pikachu',
         generation: 1,
         types: ['electric'],
         abilities: ['static'],
         id: 25
-      };
+      });
       hintSystem.initializePokemon(pokemon);
 
       // When
@@ -257,13 +241,13 @@ describe('HintSystem', () => {
   describe('reset', () => {
     it('should reset hint system to initial state', () => {
       // Given
-      const pokemon: PokemonData = {
+      const pokemon: PokemonData = createMockPokemonData({
         name: 'pikachu',
         generation: 1,
         types: ['electric'],
         abilities: ['static'],
         id: 25
-      };
+      });
       hintSystem.initializePokemon(pokemon);
       hintSystem.generateHint();
       hintSystem.generateHint();
@@ -312,7 +296,7 @@ describe('HintSystem', () => {
                 { minLength: 1, maxLength: 3 }
               ),
               id: fc.integer({ min: 1, max: 1000 })
-            }),
+            }).map(data => createMockPokemonData(data)),
             (pokemon) => {
               // When - Initialize hint system and generate hint
               hintSystem.initializePokemon(pokemon);
@@ -371,7 +355,7 @@ describe('HintSystem', () => {
                 fc.array(fc.constant('static'), { minLength: 1, maxLength: 2 })
               ),
               id: fc.integer({ min: 1, max: 1000 })
-            }),
+            }).map(data => createMockPokemonData(data)),
             (pokemon) => {
               // When - Initialize hint system and generate hint
               hintSystem.initializePokemon(pokemon);
@@ -416,7 +400,7 @@ describe('HintSystem', () => {
                 { minLength: 1, maxLength: 3 }
               ),
               id: fc.integer({ min: 1, max: 1000 })
-            }),
+            }).map(data => createMockPokemonData(data)),
             (pokemon) => {
               // When - Initialize hint system and generate hint
               hintSystem.initializePokemon(pokemon);

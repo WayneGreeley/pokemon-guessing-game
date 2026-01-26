@@ -16,9 +16,11 @@ graph TB
     GE --> PS[Pokemon Selector]
     GE --> LR[Letter Revealer]
     GE --> HS[Hint System]
+    GE --> ID[Image Display]
     PS --> API[PokeAPI Client]
     GE --> GS[Game State]
     UI --> GS
+    UI --> ID
     
     subgraph "External"
         PAPI[PokeAPI]
@@ -36,6 +38,7 @@ graph TB
 5. **UI Controller**: Handles user interactions and interface updates
 6. **Game State**: Maintains current game data and progress
 7. **PokeAPI Client**: Manages external API communication and error handling
+8. **Image Display**: Manages Pokemon artwork and sprite display at game end
 
 ## Components and Interfaces
 
@@ -82,7 +85,19 @@ interface PokemonData {
   types: string[]
   abilities: string[]
   id: number
+  sprites: PokemonSprites
 }
+
+interface PokemonSprites {
+  other: {
+    'official-artwork': {
+      front_default: string | null
+    }
+  }
+  front_default: string | null
+}
+
+
 
 interface PokemonReference {
   name: string
@@ -156,13 +171,29 @@ interface PokeAPIClient {
 interface GenerationData {
   pokemonSpecies: PokemonReference[]
 }
+
+
 ```
+
+### Image Display
+
+Manages Pokemon artwork and sprite display at game completion.
+
+```typescript
+interface ImageDisplay {
+  displayPokemonImage(pokemon: PokemonData): void
+  getImageUrl(pokemon: PokemonData): string
+  handleImageError(): void
+}
+```
+
+
 
 ## Data Models
 
 ### Pokemon Data Structure
 
-The core data structure representing a Pokemon in the game context:
+The core data structure representing a Pokemon in the game context, now enhanced with image data:
 
 ```typescript
 type PokemonData = {
@@ -171,8 +202,22 @@ type PokemonData = {
   readonly types: readonly string[]     // Pokemon types (e.g., ["electric"])
   readonly abilities: readonly string[] // Ability names
   readonly id: number            // Pokemon ID for API calls
+  readonly sprites: PokemonSprites      // Image data for display
 }
+
+type PokemonSprites = {
+  readonly other: {
+    readonly 'official-artwork': {
+      readonly front_default: string | null
+    }
+  }
+  readonly front_default: string | null
+}
+
+
 ```
+
+
 
 ### Game State Model
 
@@ -217,6 +262,14 @@ type PokemonResponse = {
       readonly name: string
     }
   }[]
+  readonly sprites: {
+    readonly front_default: string | null
+    readonly other: {
+      readonly 'official-artwork': {
+        readonly front_default: string | null
+      }
+    }
+  }
 }
 ```
 
@@ -327,3 +380,19 @@ The testing approach combines unit tests for specific functionality with propert
 ### Property 18: Pokemon Selection Round Trip
 *For any* valid Pokemon selected through the API process, retrieving its details should return consistent data that matches the selection criteria (alphabetic name, valid generation)
 **Validates: Requirements 1.2, 1.5**
+
+### Property 19: End-Game Image Display
+*For any* completed game (won or lost), the UI should display a Pokemon image (official artwork, front_default sprite, or placeholder)
+**Validates: Requirements 8.1**
+
+### Property 20: Official Artwork Priority
+*For any* Pokemon data with available official artwork, the image display should use the official-artwork sprite URL
+**Validates: Requirements 8.2**
+
+### Property 21: Sprite Fallback Behavior
+*For any* Pokemon data without official artwork but with front_default sprite, the image display should use the front_default sprite URL
+**Validates: Requirements 8.3**
+
+### Property 22: Image Placeholder Handling
+*For any* Pokemon data without both official artwork and front_default sprites, the image display should show a placeholder or no-image message
+**Validates: Requirements 8.4**

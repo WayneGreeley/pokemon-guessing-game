@@ -61,6 +61,18 @@ export const createMockPokemonData = (overrides: Partial<import('./types').Pokem
   types: ['electric'],
   abilities: ['static', 'lightning-rod'],
   id: 25,
+  sprites: {
+    other: {
+      'official-artwork': {
+        front_default: 'https://example.com/pikachu.png'
+      }
+    },
+    front_default: 'https://example.com/pikachu-sprite.png'
+  },
+  cries: {
+    latest: 'https://example.com/pikachu-cry.ogg',
+    legacy: 'https://example.com/pikachu-cry-legacy.ogg'
+  },
   ...overrides,
 });
 

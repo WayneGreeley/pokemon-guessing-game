@@ -7,14 +7,18 @@ import {
   UIController,
   GameState,
   GameEngine,
+  ImageDisplay,
   ValidationError
 } from '../types';
+
+import { ImageDisplayImpl } from './ImageDisplay';
 
 /**
  * Implementation of UI Controller that manages user interface interactions
  */
 export class UIControllerImpl implements UIController {
   private gameEngine: GameEngine | null = null;
+  private imageDisplay: ImageDisplay;
   
   // DOM element references
   private readonly pokemonNameElement: HTMLElement;
@@ -35,6 +39,9 @@ export class UIControllerImpl implements UIController {
   private readonly retryButtonElement: HTMLButtonElement;
 
   constructor() {
+    // Initialize ImageDisplay component
+    this.imageDisplay = new ImageDisplayImpl();
+    
     // Get DOM element references
     this.pokemonNameElement = this.getRequiredElement('pokemon-name');
     this.guessCountElement = this.getRequiredElement('guess-count');
@@ -91,6 +98,7 @@ export class UIControllerImpl implements UIController {
       // Hide any previous messages or hints if game is still playing
       if (gameState.gameStatus === 'playing') {
         this.hideGameMessage();
+        this.hideEndGameComponents();
         // Focus the input when game is active
         this.focusLetterInput();
       }
@@ -142,6 +150,14 @@ export class UIControllerImpl implements UIController {
     // Show the game result message
     this.messageContentElement.innerHTML = `<div class="${messageClass}">${message}</div>`;
     this.gameMessageElement.style.display = 'block';
+
+    // Display Pokemon image
+    try {
+      this.imageDisplay.displayPokemonImage(gameState.currentPokemon);
+    } catch (error) {
+      console.error('Error displaying Pokemon image:', error);
+      // Continue with game result display even if image fails
+    }
 
     // Disable input controls
     this.disableGameControls();
@@ -216,6 +232,17 @@ export class UIControllerImpl implements UIController {
    */
   private hideGameMessage(): void {
     this.gameMessageElement.style.display = 'none';
+  }
+
+  /**
+   * Hide end-game components (image)
+   */
+  private hideEndGameComponents(): void {
+    try {
+      this.imageDisplay.hideImage();
+    } catch (error) {
+      console.error('Error hiding Pokemon image:', error);
+    }
   }
 
   /**
@@ -330,6 +357,14 @@ export class UIControllerImpl implements UIController {
     this.hideError();
     this.hideLoading();
     this.enableGameControls();
+    
+    // Hide Pokemon image
+    try {
+      this.imageDisplay.hideImage();
+    } catch (error) {
+      console.error('Error hiding Pokemon image:', error);
+      // Continue with UI reset even if image hiding fails
+    }
   }
 
   /**

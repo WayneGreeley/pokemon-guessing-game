@@ -13,7 +13,8 @@ A web-based Pokemon guessing game that challenges players to identify Pokemon sp
 - **PokeAPI**: External REST API service providing Pokemon data (https://pokeapi.co/)
 - **Game_Session**: A single instance of gameplay from Pokemon selection to game completion
 - **Guess_Counter**: Tracks remaining incorrect guesses allowed
-- **Letter_Revealer**: Component that reveals correct letter positions in the Pokemon name
+- **Image_Display**: Component responsible for displaying Pokemon artwork and sprites at game end
+
 
 ## Requirements
 
@@ -101,7 +102,19 @@ A web-based Pokemon guessing game that challenges players to identify Pokemon sp
 4. THE Web_Application SHALL handle PokeAPI requests directly from the browser
 5. THE Web_Application SHALL provide a responsive design that works across different screen sizes
 
-### Requirement 8: API Integration and Error Handling
+### Requirement 8: End-Game Pokemon Image Display
+
+**User Story:** As a player, I want to see professional Pokemon artwork when the game ends, so that I can visually appreciate the Pokemon I was guessing.
+
+#### Acceptance Criteria
+
+1. WHEN the game ends (win or loss), THE UI_Controller SHALL display the Pokemon's official artwork image
+2. WHEN official artwork is available, THE Image_Display SHALL use the official-artwork sprite from the existing Pokemon endpoint data
+3. WHEN official artwork is not available, THE Image_Display SHALL fallback to the front_default sprite from the existing Pokemon endpoint data
+4. WHEN both official artwork and front_default sprites are unavailable, THE Image_Display SHALL display a placeholder or text indicating no image available
+5. THE Image_Display SHALL ensure images are properly sized and responsive for different screen sizes
+
+### Requirement 9: API Integration and Error Handling
 
 **User Story:** As a player, I want the game to handle network issues gracefully, so that temporary connectivity problems don't break my experience.
 

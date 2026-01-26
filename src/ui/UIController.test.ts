@@ -4,19 +4,33 @@
  */
 
 import { UIControllerImpl } from './UIController';
-import { GameState, GameEngine, GuessResult, HintResult } from '../types';
+import { GameState, GameEngine, GuessResult, HintResult, PokemonData } from '../types';
 import * as fc from 'fast-check';
+
+// Helper function to create complete mock Pokemon data
+function createMockPokemonData(overrides: Partial<PokemonData> = {}): PokemonData {
+  return {
+    name: 'pikachu',
+    generation: 1,
+    types: ['electric'],
+    abilities: ['static'],
+    id: 25,
+    sprites: {
+      other: {
+        'official-artwork': {
+          front_default: 'https://example.com/pikachu.png'
+        }
+      },
+      front_default: 'https://example.com/pikachu-sprite.png'
+    },
+    ...overrides
+  };
+}
 
 // Mock game engine
 class MockGameEngine implements GameEngine {
   private mockState: GameState = {
-    currentPokemon: {
-      name: 'pikachu',
-      generation: 1,
-      types: ['electric'],
-      abilities: ['static'],
-      id: 25
-    },
+    currentPokemon: createMockPokemonData(),
     revealedName: '_______',
     guessedLetters: { correct: [], incorrect: [] },
     remainingGuesses: 7,
@@ -81,6 +95,13 @@ describe('UIControllerImpl', () => {
       <div id="error"></div>
       <div id="error-message"></div>
       <button id="retry-button"></button>
+      <div id="pokemon-image-container"></div>
+      <img id="pokemon-image" />
+      <div id="pokemon-image-placeholder"></div>
+      <div id="pokemon-audio-container"></div>
+      <button id="pokemon-audio-play"></button>
+      <div id="pokemon-audio-status"></div>
+      <div id="game-results"></div>
     `;
 
     mockGameEngine = new MockGameEngine();
@@ -105,13 +126,7 @@ describe('UIControllerImpl', () => {
     test('should update Pokemon name display with revealed letters', () => {
       // Given: A game state with partially revealed name
       const gameState: GameState = {
-        currentPokemon: {
-          name: 'pikachu',
-          generation: 1,
-          types: ['electric'],
-          abilities: ['static'],
-          id: 25
-        },
+        currentPokemon: createMockPokemonData(),
         revealedName: 'p_k_c__',
         guessedLetters: { correct: ['p', 'k', 'c'], incorrect: [] },
         remainingGuesses: 5,
@@ -201,13 +216,7 @@ describe('UIControllerImpl', () => {
     test('should show win message when game is won', () => {
       // Given: A won game state
       const gameState: GameState = {
-        currentPokemon: {
-          name: 'pikachu',
-          generation: 1,
-          types: ['electric'],
-          abilities: ['static'],
-          id: 25
-        },
+        currentPokemon: createMockPokemonData(),
         revealedName: 'pikachu',
         guessedLetters: { correct: ['p', 'i', 'k', 'a', 'c', 'h', 'u'], incorrect: [] },
         remainingGuesses: 5,
@@ -232,13 +241,7 @@ describe('UIControllerImpl', () => {
     test('should show loss message when game is lost', () => {
       // Given: A lost game state
       const gameState: GameState = {
-        currentPokemon: {
-          name: 'charizard',
-          generation: 1,
-          types: ['fire', 'flying'],
-          abilities: ['blaze'],
-          id: 6
-        },
+        currentPokemon: createMockPokemonData({ name: 'charizard' }),
         revealedName: 'c_____a__',
         guessedLetters: { correct: ['c', 'a'], incorrect: ['x', 'y', 'z', 'w', 'q', 'b', 'n'] },
         remainingGuesses: 0,
@@ -428,7 +431,7 @@ describe('UIControllerImpl', () => {
           types: fc.array(fc.constantFrom('fire', 'water', 'grass', 'electric', 'psychic', 'ice', 'dragon', 'dark', 'fairy', 'fighting', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'normal'), { minLength: 1, maxLength: 2 }),
           abilities: fc.array(fc.stringMatching(/^[a-z-]{3,20}$/), { minLength: 1, maxLength: 3 }),
           id: fc.integer({ min: 1, max: 1000 })
-        });
+        }).map(partial => createMockPokemonData(partial));
 
         // Generator for game status
         const gameStatusArbitrary = fc.constantFrom('playing', 'won', 'lost');
@@ -591,13 +594,7 @@ describe('UIControllerImpl', () => {
           }
 
           return fc.constant({
-            currentPokemon: {
-              name: 'testpokemon',
-              generation: 1,
-              types: ['normal'],
-              abilities: ['test-ability'],
-              id: 1
-            },
+            currentPokemon: createMockPokemonData({ name: 'testpokemon', id: 1 }),
             revealedName: gameStatus === 'won' ? 'testpokemon' : 't_st__k_m_n',
             guessedLetters: {
               correct: guessedLetters.correct as readonly string[],
@@ -754,13 +751,7 @@ describe('UIControllerImpl', () => {
             (edgeCase) => {
               // Given: A UI controller and an edge case game state
               const gameState: GameState = {
-                currentPokemon: {
-                  name: 'pikachu',
-                  generation: 1,
-                  types: ['electric'],
-                  abilities: ['static'],
-                  id: 25
-                },
+                currentPokemon: createMockPokemonData(),
                 revealedName: 'p_k_c__',
                 guessedLetters: {
                   correct: edgeCase.guessedLetters.correct as readonly string[],
@@ -863,7 +854,7 @@ describe('UIControllerImpl', () => {
           types: fc.array(fc.constantFrom('fire', 'water', 'grass', 'electric', 'psychic', 'ice', 'dragon', 'dark', 'fairy', 'fighting', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'normal'), { minLength: 1, maxLength: 2 }),
           abilities: fc.array(fc.stringMatching(/^[a-z-]{3,20}$/), { minLength: 1, maxLength: 3 }),
           id: fc.integer({ min: 1, max: 1000 })
-        });
+        }).map(partial => createMockPokemonData(partial));
 
         // Generator for completed game states (won or lost)
         const completedGameStateArbitrary = fc.record({
@@ -1039,7 +1030,7 @@ describe('UIControllerImpl', () => {
             types: fc.array(fc.constantFrom('psychic', 'normal', 'flying'), { minLength: 1, maxLength: 1 }),
             abilities: fc.array(fc.constantFrom('synchronize', 'keen-eye', 'overgrow'), { minLength: 1, maxLength: 1 }),
             id: fc.integer({ min: 1, max: 151 })
-          }),
+          }).map(partial => createMockPokemonData(partial)),
           // Longer names
           fc.record({
             name: fc.constantFrom('charizard', 'blastoise', 'venusaur', 'alakazam'),
@@ -1047,7 +1038,7 @@ describe('UIControllerImpl', () => {
             types: fc.array(fc.constantFrom('fire', 'water', 'grass', 'psychic'), { minLength: 1, maxLength: 2 }),
             abilities: fc.array(fc.constantFrom('blaze', 'torrent', 'overgrow', 'synchronize'), { minLength: 1, maxLength: 2 }),
             id: fc.integer({ min: 1, max: 151 })
-          }),
+          }).map(partial => createMockPokemonData(partial)),
           // Names with repeated letters
           fc.record({
             name: fc.constantFrom('eevee', 'seel', 'doduo', 'koffing'),
@@ -1055,7 +1046,7 @@ describe('UIControllerImpl', () => {
             types: fc.array(fc.constantFrom('normal', 'water', 'flying', 'poison'), { minLength: 1, maxLength: 2 }),
             abilities: fc.array(fc.constantFrom('run-away', 'thick-fat', 'early-bird', 'levitate'), { minLength: 1, maxLength: 2 }),
             id: fc.integer({ min: 1, max: 151 })
-          })
+          }).map(partial => createMockPokemonData(partial))
         );
 
         // Generator for game completion scenarios

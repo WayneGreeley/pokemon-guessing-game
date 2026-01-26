@@ -122,7 +122,15 @@ describe('PokeAPIClientImpl', () => {
         id: 25,
         generation: 1, // Pikachu is Gen 1
         types: ['electric'],
-        abilities: ['static', 'lightning-rod']
+        abilities: ['static', 'lightning-rod'],
+        sprites: {
+          other: {
+            'official-artwork': {
+              front_default: null
+            }
+          },
+          front_default: null
+        }
       });
     });
 

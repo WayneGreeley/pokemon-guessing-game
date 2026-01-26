@@ -4,6 +4,7 @@
  */
 
 import { PokemonGuessingGame } from './main';
+import { createMockPokemonData } from './test-setup';
 
 // Mock only the API client to avoid real network calls
 jest.mock('./api/PokeAPIClient', () => {
@@ -15,13 +16,13 @@ jest.mock('./api/PokeAPIClient', () => {
           { name: 'charizard', url: 'https://pokeapi.co/api/v2/pokemon-species/6/' }
         ]
       }),
-      getPokemonDetails: jest.fn().mockResolvedValue({
+      getPokemonDetails: jest.fn().mockResolvedValue(createMockPokemonData({
         name: 'pikachu',
         generation: 1,
         types: ['electric'],
         abilities: ['static', 'lightning-rod'],
         id: 25
-      })
+      }))
     }))
   };
 });
@@ -42,6 +43,25 @@ describe('Integration Tests - Complete Game Flows', () => {
           <div id="game-area">
             <div id="pokemon-display">
               <div id="pokemon-name" class="pokemon-name"></div>
+              <div id="pokemon-image-container" style="display: none;">
+                <img id="pokemon-image" style="display: none;" />
+                <div id="pokemon-image-placeholder" style="display: none;">
+                  <span class="placeholder-text">No image available</span>
+                </div>
+              </div>
+              <div id="pokemon-audio-container" style="display: none;">
+                <button id="pokemon-audio-play" style="display: none;">Play Cry</button>
+                <div id="pokemon-audio-status" style="display: none;">Audio Status</div>
+                <div id="audio-placeholder" style="display: none;">
+                  <span class="placeholder-text">No audio available</span>
+                </div>
+              </div>
+              <div id="flavor-text-container" style="display: none;">
+                <div id="flavor-text-content"></div>
+                <div id="flavor-text-placeholder" style="display: none;">
+                  <span class="placeholder-text">No description available</span>
+                </div>
+              </div>
             </div>
             
             <div id="game-info">

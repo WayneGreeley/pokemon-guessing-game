@@ -18,7 +18,7 @@ This implementation plan converts the Pokemon guessing game design into discrete
     - Implement API calls for generation and Pokemon detail endpoints
     - Add network timeout and retry logic
     - Implement response validation and error handling
-    - _Requirements: 1.2, 1.5, 8.1, 8.2, 8.3, 8.4, 8.5_
+    - _Requirements: 1.2, 1.5, 9.1, 9.2, 9.3, 9.4, 9.5_
 
   - [x] 2.2 Write property test for generation selection range
     - **Property 1: Generation Selection Range**
@@ -142,38 +142,65 @@ This implementation plan converts the Pokemon guessing game design into discrete
 
   - [x] 8.2 Write property test for API error handling
     - **Property 16: API Error Handling**
-    - **Validates: Requirements 8.1, 8.3**
+    - **Validates: Requirements 9.1, 9.3**
 
   - [x] 8.3 Write property test for data validation integrity
     - **Property 17: Data Validation Integrity**
-    - **Validates: Requirements 8.2, 8.5**
+    - **Validates: Requirements 9.2, 9.5**
 
-- [ ] 9. Integration and final wiring
-  - [x] 9.1 Wire all components together
-    - Connect Game Engine, Pokemon Selector, Letter Revealer, Hint System, and UI Controller
+- [ ] 9. Implement end-game Pokemon image display
+  - [x] 9.1 Create Image Display component
+    - Implement image URL selection logic (official-artwork → front_default → placeholder)
+    - Add responsive image sizing and error handling
+    - Create methods to display Pokemon images at game end
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+
+  - [x] 9.2 Write property test for end-game image display
+    - **Property 19: End-Game Image Display**
+    - **Validates: Requirements 8.1**
+
+  - [x] 9.3 Write property test for official artwork priority
+    - **Property 20: Official Artwork Priority**
+    - **Validates: Requirements 8.2**
+
+  - [x] 9.4 Write property test for sprite fallback behavior
+    - **Property 21: Sprite Fallback Behavior**
+    - **Validates: Requirements 8.3**
+
+  - [x] 9.5 Write property test for image placeholder handling
+    - **Property 22: Image Placeholder Handling**
+    - **Validates: Requirements 8.4**
+
+- [ ] 10. Integration and final wiring
+  - [x] 10.1 Wire all components together
+    - Connect Game Engine, Pokemon Selector, Letter Revealer, Hint System, Image Display, and UI Controller
     - Implement main game loop and event handling
-    - Add CSS styling for responsive design
-    - _Requirements: 7.5_
+    - Add CSS styling for responsive design including end-game display enhancements
+    - _Requirements: 7.5, 8.1_
 
-  - [x] 9.2 Write property test for Pokemon selection round trip
+  - [x] 10.2 Write property test for Pokemon selection round trip
     - **Property 18: Pokemon Selection Round Trip**
     - **Validates: Requirements 1.2, 1.5**
 
-  - [x] 9.3 Write integration tests for complete game flows
-    - Test full game scenarios from start to win/loss
-    - Test error recovery scenarios
-    - Test multiple consecutive games
+  - [x] 10.3 Write integration tests for complete game flows
+    - Test full game scenarios from start to win/loss including end-game displays
+    - Test error recovery scenarios for all components
+    - Test multiple consecutive games with end-game enhancements
 
-- [x] 10. Final checkpoint and deployment preparation
+- [x] 11. Final checkpoint and deployment preparation
   - Ensure all tests pass, ask the user if questions arise.
   - Verify GitHub Pages deployment requirements are met
-  - Test responsive design across different screen sizes
+  - Test responsive design across different screen sizes including image display features
 
 ## Notes
 
 - All tasks are required for comprehensive implementation
-- Each property test should run minimum 100 iterations for thorough coverage
-- Property tests use fast-check library for TypeScript property-based testing
+- Each task references specific requirements for traceability
+- Checkpoints ensure incremental validation
+- Property tests validate universal correctness properties for all features including end-game enhancements
+- Unit tests validate specific examples and edge cases
+- New end-game features (image display) are implemented with comprehensive testing
 - All API calls include proper error handling and user feedback
 - UI implementation focuses on clean, responsive design suitable for GitHub Pages
-- Each task references specific requirements for traceability
+- Each property test should run minimum 100 iterations for thorough coverage
+- Property tests use fast-check library for TypeScript property-based testing

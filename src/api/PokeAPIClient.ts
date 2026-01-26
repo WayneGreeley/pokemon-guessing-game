@@ -7,6 +7,7 @@ import {
   PokeAPIClient,
   GenerationData,
   PokemonData,
+  PokemonSprites,
   GenerationResponse,
   PokemonResponse,
   PokemonReference,
@@ -306,6 +307,16 @@ export class PokeAPIClientImpl implements PokeAPIClient {
       return abilityObj.ability.name;
     });
 
+    // Extract and validate sprites
+    const sprites: PokemonSprites = {
+      other: {
+        'official-artwork': {
+          front_default: response.sprites?.other?.['official-artwork']?.front_default || null
+        }
+      },
+      front_default: response.sprites?.front_default || null
+    };
+
     // Determine generation from Pokemon ID (approximate mapping)
     const generation = this.determineGenerationFromId(response.id);
 
@@ -314,7 +325,8 @@ export class PokeAPIClientImpl implements PokeAPIClient {
       generation,
       types,
       abilities,
-      id: response.id
+      id: response.id,
+      sprites
     };
   }
 
